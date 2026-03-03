@@ -1,4 +1,4 @@
-\# 🎓 Student Performance Prediction App
+🎓 Student Performance Prediction App
 
 
 
@@ -6,7 +6,7 @@ This is a Machine Learning web application built using Python and Streamlit.
 
 
 
-\## 📌 Project Description
+📌 Project Description
 
 This app predicts student performance based on:
 
@@ -26,7 +26,7 @@ The model was trained using a machine learning algorithm and saved as model.pkl.
 
 
 
-\## 🛠 Technologies Used
+🛠 Technologies Used
 
 \- Python
 
@@ -40,7 +40,7 @@ The model was trained using a machine learning algorithm and saved as model.pkl.
 
 
 
-\## 🚀 How to Run the Project
+🚀 How to Run the Project
 
 
 
@@ -56,7 +56,7 @@ streamlit run app.py
 
 
 
-\## 📂 Project Files
+ 📂 Project Files
 
 \- app.py → Streamlit UI
 
@@ -70,7 +70,8 @@ streamlit run app.py
 
 
 
-\## 👨‍💻 Author
+ Author
 
 Faishal Hussain
+
 
