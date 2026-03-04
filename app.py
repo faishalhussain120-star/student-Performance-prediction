@@ -1,4 +1,4 @@
-import streamlit as st
+            import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
@@ -7,9 +7,9 @@ import joblib
 model = joblib.load("model.pkl")
 
 st.title("🎓 Student Performance Predictor")
-st.write("Manual input for one student or bulk prediction from CSV.")
+st.write("Enter details manually for one student or upload a CSV for bulk predictions.")
 
-# ---------------- Sample CSV download ----------------
+# ---------------- Sample CSV Download ----------------
 st.subheader("📄 Download Sample CSV")
 sample_csv = """Study Hours,Attendance,Previous Marks,Sleep Hours,Assignments Completed
 5,80,70,7,10
@@ -21,7 +21,7 @@ sample_csv = """Study Hours,Attendance,Previous Marks,Sleep Hours,Assignments Co
 4,55,48,6,7
 9,92,88,8,14"""
 st.download_button(
-    "📥 Download Sample CSV",
+    "📥 Download Sample Students CSV",
     data=sample_csv,
     file_name="students_sample.csv",
     mime="text/csv"
@@ -55,28 +55,34 @@ else:
             st.write("Preview of your CSV:")
             st.dataframe(data.head())
 
-            # Define required columns
-            required_cols = ["Study Hours", "Attendance", "Previous Marks", "Sleep Hours", "Assignments Completed"]
-            
-            # Check which columns exist
-            missing_cols = [col for col in required_cols if col not in data.columns]
-            if missing_cols:
-                st.warning(f"Missing columns will be filled with zeros: {missing_cols}")
-                for col in missing_cols:
+            # ---------------- Fix Column Names ----------------
+            rename_dict = {
+                "Study Hours": "study_hours",
+                "Attendance": "attendance",
+                "Previous Marks": "previous_marks",
+                "Sleep Hours": "sleep_hours",
+                "Assignments Completed": "assignment"
+            }
+            data.rename(columns=rename_dict, inplace=True)
+
+            # ---------------- Fill missing columns ----------------
+            required_cols = ["study_hours","attendance","previous_marks","sleep_hours","assignment"]
+            for col in required_cols:
+                if col not in data.columns:
+                    st.warning(f"Missing column '{col}' added with zeros")
                     data[col] = 0
 
-            # Extract features in correct order
-            features = data[required_cols]
-            features = features.apply(pd.to_numeric, errors='coerce').fillna(0)
-            
-            # Predict
+            # ---------------- Prepare features ----------------
+            features = data[required_cols].apply(pd.to_numeric, errors='coerce').fillna(0)
+
+            # ---------------- Predict ----------------
             predictions = model.predict(features)
             data["Predicted Performance"] = ["Perform Well" if p==1 else "Needs Improvement" for p in predictions]
             
             st.subheader("📊 Prediction Results")
             st.dataframe(data)
-            
-            # Download predictions
+
+            # ---------------- Download Predictions ----------------
             csv = data.to_csv(index=False).encode('utf-8')
             st.download_button(
                 "📥 Download Predictions CSV",
@@ -84,6 +90,7 @@ else:
                 file_name="predicted_students.csv",
                 mime="text/csv"
             )
+
         except Exception as e:
-            st.error("❌ Error processing the CSV file. Make sure it is valid.")
+            st.error("❌ Error processing the CSV. Make sure the file is valid.")
             st.write(e)
