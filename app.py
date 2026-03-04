@@ -1,38 +1,27 @@
 import streamlit as st
-import pandas as pd
+import numpy as np
 import joblib
 
-# Load model
+# Load trained model
 model = joblib.load("model.pkl")
 
-st.title("🎓 Student Performance Prediction (Dataset Version)")
+st.title("🎓 Student Performance Predictor")
 
-# Upload CSV file
-uploaded_file = st.file_uploader("Upload Student Dataset (CSV file)", type=["csv"])
+st.write("Enter student details below to predict performance.")
 
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
-    
-    st.subheader("📄 Uploaded Dataset")
-    st.write(data.head())
+# User Inputs
+study_hours = st.number_input("Study Hours", min_value=0.0, max_value=24.0, value=5.0)
+attendance = st.number_input("Attendance (%)", min_value=0.0, max_value=100.0, value=75.0)
+previous_marks = st.number_input("Previous Marks", min_value=0.0, max_value=100.0, value=60.0)
+sleep_hours = st.number_input("Sleep Hours", min_value=0.0, max_value=24.0, value=7.0)
+assignments_completed = st.number_input("Assignments Completed", min_value=0, max_value=20, value=10)
 
-    try:
-        # Make predictions
-        predictions = model.predict(data)
-        data["Predicted Performance"] = predictions
+# Predict Button
+if st.button("Predict Performance"):
+    input_data = np.array([[study_hours, attendance, previous_marks, sleep_hours, assignments_completed]])
+    prediction = model.predict(input_data)
 
-        st.subheader("📊 Prediction Results")
-        st.write(data)
-
-        # Download button
-        csv = data.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            "Download Predictions",
-            csv,
-            "predicted_students.csv",
-            "text/csv"
-        )
-
-    except Exception as e:
-        st.error("Error: Please check if dataset columns match model features.")
-        st.write(e)
+    if prediction[0] == 1:
+        st.success("🎉 The student is likely to Perform Well!")
+    else:
+        st.error("⚠️ The student may need Improvement.")
