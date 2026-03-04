@@ -1,4 +1,4 @@
-            import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
@@ -94,3 +94,4 @@ else:
         except Exception as e:
             st.error("❌ Error processing the CSV. Make sure the file is valid.")
             st.write(e)
+
